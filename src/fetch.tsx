@@ -1,17 +1,15 @@
 import {API_KEY, API_HOST} from "@env";
 import axios from "axios";
-export const getMealByID = async (link: string, ID : number) => {
+export const getMealByID = async (link: string, setRecipeInfo : React.Dispatch<React.SetStateAction<any>>) => {
     try {
         const response = await axios.get(link, {
-            params : {
-                i : ID
-            },
             headers: {
                 "Content-Type" : "application/json",
                 "Accept" : "application/json"
             }
         });
         const data = response.data;
+        setRecipeInfo(data);
 
     }
     catch(err) {

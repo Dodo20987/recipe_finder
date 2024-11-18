@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { Pressable, Text, View, Image,ScrollView } from "react-native";
 import { getRandomRecipe } from "./fetch";
+import { useNavigation } from "@react-navigation/native";
 
 const DisplayRandom = () => {
+    const navigation = useNavigation();
     const [recipes, setRecipies] = useState<any[]>([]);
     const [shallowInfo, setShallowInfo] = useState<any[]>([]);
     useEffect(() => {
@@ -17,17 +19,13 @@ const DisplayRandom = () => {
                 const newItem = {
                     image : recipes[i]["meals"][0]["strMealThumb"],
                     name : recipes[i]["meals"][0]["strMeal"],
-                    area : recipes[i]["meals"][0]["strArea"]
+                    area : recipes[i]["meals"][0]["strArea"],
+                    ID : recipes[i]["meals"][0]["idMeal"]
                 };
                 setShallowInfo((prevItem : any) => [...prevItem,newItem])
             }
         }
     },[recipes])
-    /*
-    useEffect(() => {
-        console.log(images);
-    },[images])
-    */
     return (
         <View>
             {shallowInfo.length === 0 ? (
@@ -38,12 +36,15 @@ const DisplayRandom = () => {
                 className="mt-4">
             {shallowInfo.map((data, index) => (
                 <View>
-                    <Image
-                        key={index}
-                        source={{ uri: data.image }}
-                        className="h-36 w-36 rounded-3xl ml-2 mr-2
-                        border-2 border-black"
-                    />
+                    <Pressable
+                    onPress = {() => navigation.navigate("Recipe", {ID : data.ID})}>
+                        <Image
+                            key={index}
+                            source={{ uri: data.image }}
+                            className="h-36 w-36 rounded-3xl ml-2 mr-2
+                            border-2 border-black"
+                        />
+                    </Pressable>
                     <Text className="flex flex-wrap w-36 text-center">
                         {data.name}
                     </Text>
