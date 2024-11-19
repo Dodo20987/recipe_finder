@@ -1,26 +1,59 @@
 import {Text, View, TextInput, Pressable,ScrollView} from 'react-native';
-import { useState, useEffect} from 'react';
+import { useState, useEffect, useRef} from 'react';
 import Filter from './Filter';
 import {getRandomRecipe} from "./fetch"
-import { getCategories } from './fetch';
+import { getCategories, getData} from './fetch';
+import DisplaySearchResults from './DisplaySearchResults';
 import DisplayRandom from './DisplayRandom';
+import { MealItem } from './types';
+
 const Home: React.FC  = () => {
-    const [filterVisible, setFilterVisible] = useState(false);
     const [displayCategory, setDisplayCategory] = useState<JSX.Element[]>([]);
     const [categoryInfo, setCategoryInfo] = useState<any>();
     const [category, setCategory] = useState<string>();
+    const [recipeName, setRecipeName] = useState<string>("");
+    const [searchResults, setSearchResults] = useState<any[]>([]);
+    const [displayResults, setDisplayResults] = useState<MealItem[]>([]);
+    const recipeRef = useRef(recipeName);
 
+    useEffect(() => {
+        console.log(recipeName);
+        recipeRef.current = recipeName;
+    },[recipeName])
+
+    const handleSearch = () => {
+        console.log("searching...");
+        const link = process.env.EXPO_PUBLIC_RECIPE_SEARCH_LINK + "?s=" + recipeRef.current;
+        console.log(link);
+        getData(link,setSearchResults);
+    }
+    
     const handleCategory = (text: string) => {
         if(category === text)
             setCategory("");
         else
             setCategory(text)
     }
+    useEffect(() => {
+        if(searchResults["meals"]) {
+            const len = searchResults["meals"].length;
+            for (let i = 0; i < len; i++) {
+                const newItem: MealItem = {
+                    image : searchResults["meals"][i]["strMealThumb"],
+                    ID : searchResults["meals"][i]["idMeal"],
+                    name : searchResults["meals"][i]["strMeal"],
+                    area : searchResults["meals"][i]["strArea"]
+                }
+                //console.log("new item: ", newItem)
+                setDisplayResults((prevItem : any) => [...prevItem, newItem]);
+            }
+        }
+       //console.log("res: ", searchResults["meals"]);
+    },[searchResults])
 
-    const handleFilterVisible = () => {
-        setFilterVisible(!filterVisible);
-    }
-
+    useEffect(() => {
+        //console.log(displayResults);
+    },[displayResults])
     useEffect(() => {
         getCategories(process.env.EXPO_PUBLIC_CATEGORY_LINK || "", setCategoryInfo);
     },[])
@@ -40,7 +73,6 @@ const Home: React.FC  = () => {
         }
     }, [categoryInfo, category])
     return ( <>
-            {/*<Filter filterVisible = {filterVisible} setFilterVisible={setFilterVisible}/> */}
             <View className='flex'>
                 <View className='border-black 
                 m-4'>
@@ -55,9 +87,11 @@ const Home: React.FC  = () => {
 
                     <View className='flex flex-row'>
                         <TextInput
+                            value={recipeName}
                             className='border-black border-2 w-4/5 rounded-full h-14 p-4 mb-2
                             bg-red-300 mr-8'
                             placeholder='Search Recipes...'
+                            onChangeText={setRecipeName}
                         />
                         <Pressable className='
                         border-black
@@ -69,7 +103,7 @@ const Home: React.FC  = () => {
                         items-center
                         bg-red-300
                         active:bg-blue-400'
-                        onPress={handleFilterVisible}>
+                        onPress={handleSearch}>
                             <Text>
                                 &#x1F50D;
                             </Text>
@@ -87,15 +121,26 @@ const Home: React.FC  = () => {
                        {displayCategory}
                     </ScrollView>
                 </View>
+                {displayResults.length === 0 ? (
+                    <View>
+                        <Text className='m-4 text-2xl'>
+                            Explore:
+                        </Text>
+                        <View className='flex flex-row'>
+                                <DisplayRandom />
+                        </View>
+                    </View>
+                ) : (
+                    <View> 
+                        <Text className='m-4 text-2xl'>
+                            Results:
+                        </Text>
+                        <View className='flex flex-row'>
+                            <DisplaySearchResults displayResults = {displayResults}/>
+                        </View>
+                    </View>
 
-                <Text className='m-4 text-2xl'>
-                    Explore:
-                </Text>
-                <View className='flex flex-row'>
-                    
-                        <DisplayRandom />
-                    
-                </View>
+                )} 
             </View>
             </>
     );
