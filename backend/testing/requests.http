@@ -1,0 +1,35 @@
+### get home page
+GET http://localhost:8080/
+
+### get all users
+GET  http://localhost:8080/users
+
+### Inserting a user into the database
+POST http://localhost:8080/save
+Content-Type: application/json
+
+{
+    "name" : "soup3",
+    "password" : "meow",
+    "email" : "chicken3@hotmail.com"
+}
+
+### login
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+    "name" : "soup3",
+    "password" : "meow"
+}
+
+###delete a user
+DELETE http://localhost:8080/delete/3
+
+### updating a user
+PUT http://localhost:8080/update/4
+Content-Type: application/json
+
+{
+    "name" : "apples"
+}

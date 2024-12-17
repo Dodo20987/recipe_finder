@@ -22,6 +22,8 @@ const Home: React.FC  = () => {
     },[recipeName])
 
     const handleSearch = () => {
+        // Make sure to empty search results before searching for new results
+        setDisplayResults([]);
         console.log("searching...");
         const link = process.env.EXPO_PUBLIC_RECIPE_SEARCH_LINK + "?s=" + recipeRef.current;
         console.log(link);
