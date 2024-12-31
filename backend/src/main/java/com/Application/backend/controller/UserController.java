@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-public class ApiControllers {
+@CrossOrigin(origins = "http://10.0.0.86:8081")
+public class UserController {
 
     @Autowired
     private UserRepo userRepo;
@@ -34,6 +35,7 @@ public class ApiControllers {
     // registers a new user, and saves the hash of the password to the database
     @PostMapping("/save")
     public Integer saveUser(@RequestBody User user) {
+        System.out.println("request received");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepo.save(user);
         return 201;
@@ -43,7 +45,6 @@ public class ApiControllers {
     @PostMapping("/login")
     public Integer loginUser(@RequestBody LoginRequest request) {
         try {
-            // TODO: try to log in via password and username/email
             boolean isFound = authService.authenticate(request.getName(), request.getPassword());
             if(!isFound) {
                 throw new EntityNotFoundException("Incorrect password or username/email entered");

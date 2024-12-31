@@ -1,29 +1,46 @@
 import {Text,TextInput,View,Pressable} from 'react-native';
-import React, {useState, useEffect} from "react";
-
+import React, {useState, useRef, useEffect} from "react";
+import { useNavigation } from "@react-navigation/native";
+import { RootStackParamList, loginRequest } from './types';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { login } from './fetch';
+import { useAuth } from './AuthContext';
+type navigationProps = NativeStackNavigationProp<RootStackParamList>;
 import "../global.css";
 const Login: React.FC = () => {
-    const [email, setEmail] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
-    const handleSubmit = () => {
-        console.log("button clicked");
-        console.log("info:");
-        console.log(email);
-        console.log(password);
+    const navigation = useNavigation<navigationProps>();
+    const nameRef = useRef<string>("");
+    const passwordRef = useRef<string>("");
+    const [error, setError] = useState<string>("");
+    const [RegisterPressed, setRegisterPressed] = useState<boolean>(false);
+    const [success, setSuccess] = useState<boolean>(false);
+    const {loggedIn, setLoggedIn} = useAuth();
+    console.log("error: ", error)
+    const handleSubmit = async () => {
+        const loginObj : loginRequest = {name : "", password : ""};
+        loginObj.name = nameRef.current;
+        loginObj.password = passwordRef.current;
+        const link = process.env.EXPO_PUBLIC_API_BASE + "/login";
+        await login(link, loginObj, setSuccess);
     }
-    const handleEmailInput = (text: string) => {
-        console.log("email input entered");
-        setEmail(text);
-        
+    useEffect(() => {
+
+        if(success) {
+            navigation.replace("Home");
+            setLoggedIn(true);
+        }
+        else {
+            setError("Invalid username, email, or password");
+        }
+    }, [success])
+    const handleNameInput = (text: string) => {
+        nameRef.current = text;
     }
+
     const handlePassInput = (text: string) => {
-        console.log("pass input entered");
-        setPassword(text);
-        
+        passwordRef.current = text;
     }
-    /*useEffect(() => {
-        console.log(email);
-    }, [email])*/
+
     return <>
         <View className='flex flex-col'>
             <View className='flex justify-start items-center w-full mt-8'>
@@ -35,7 +52,7 @@ const Login: React.FC = () => {
                 <TextInput
                 className='border-black border-2 w-11/12 rounded-lg h-14 mt-3 p-4 mb-8'
                 placeholder='example@mail.com'
-                onChangeText={handleEmailInput}
+                onChangeText={handleNameInput}
                 />
 
                 <Text className='text-xl'>Password</Text>
@@ -47,10 +64,20 @@ const Login: React.FC = () => {
             </View>
 
             <View className='flex items-start w-full ml-4 mr-4 mt-4'>
+                <Pressable 
+                onPress={() => navigation.navigate("Signup")}
+                onPressIn={() => setRegisterPressed(true)}
+                onPressOut={() => setRegisterPressed(false)}
+                >
+                    <Text className={`${RegisterPressed ? 'text-blue-400' : 'text-orange-600'}`}>Register</Text>
+                </Pressable>
                 <Text className='text-orange-600'>Forgot Password?</Text>
             </View>
 
             <View className='flex items-start w-full ml-4 mr-4 mt-16'>
+                {(loggedIn === false || loggedIn === undefined) && error !== "" ? (
+                    <Text className='text-orange-600'>{error}</Text>
+                ) : null}
                 <Pressable className='flex justify-center items-center p-4 rounded-3xl bg-orange-600 h-16 w-11/12
                 active:bg-blue-400'
                 onPress={handleSubmit}

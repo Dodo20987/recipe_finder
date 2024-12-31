@@ -6,14 +6,14 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import HomeStack from "./src/HomeStack";
 import Navbar from './src/Navbar';
-//const Stack = createNativeStackNavigator();
+import { AuthProvider } from './src/AuthContext';
 export default function App() {
-  const [Signedin, handleSignin] = useState(false);
   return (
-    <NavigationContainer>    
-      <Navbar />
-      
-    </NavigationContainer>
+    <AuthProvider>
+      <NavigationContainer>    
+        <Navbar />
+      </NavigationContainer>
+    </AuthProvider> 
   );
 }
 

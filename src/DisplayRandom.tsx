@@ -2,9 +2,12 @@ import { useState, useEffect } from "react";
 import { Pressable, Text, View, Image,ScrollView } from "react-native";
 import { getRandomRecipe } from "./fetch";
 import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from "./types";
+type navigationProps = NativeStackNavigationProp<RootStackParamList>;
 
 const DisplayRandom = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<navigationProps>();
     const [recipes, setRecipies] = useState<any[]>([]);
     const [shallowInfo, setShallowInfo] = useState<any[]>([]);
     useEffect(() => {
@@ -35,11 +38,10 @@ const DisplayRandom = () => {
                 horizontal = {true}
                 className="mt-4">
             {shallowInfo.map((data, index) => (
-                <View>
+                <View key={index}>
                     <Pressable
                     onPress = {() => navigation.navigate("Recipe", {ID : data.ID})}>
                         <Image
-                            key={index}
                             source={{ uri: data.image }}
                             className="h-36 w-36 rounded-3xl ml-2 mr-2
                             border-2 border-black"

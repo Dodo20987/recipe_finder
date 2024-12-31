@@ -9,9 +9,8 @@ POST http://localhost:8080/save
 Content-Type: application/json
 
 {
-    "name" : "soup3",
-    "password" : "meow",
-    "email" : "chicken3@hotmail.com"
+    "name" : "chicken",
+    "password" : "cat"
 }
 
 ### login
@@ -19,8 +18,8 @@ POST http://localhost:8080/login
 Content-Type: application/json
 
 {
-    "name" : "soup3",
-    "password" : "meow"
+    "name" : "chicken",
+    "password" : "cat"
 }
 
 ###delete a user
