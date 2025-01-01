@@ -14,7 +14,7 @@ public class AuthService {
     private PasswordEncoder passwordEncoder;
     public boolean authenticate(String name, String password) {
         // Add in logic to see if user with particular password and name is found
-        User user = userRepo.findByName(name).orElse(null);
+        User user = userRepo.findByUsername(name).orElse(null);
         // user not found
         if(user == null)
         {
