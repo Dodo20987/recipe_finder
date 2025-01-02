@@ -15,7 +15,7 @@ public class User {
     @NotBlank(message = "name is required")
     @Size(min = 2, max = 40)
     @Column(nullable = false, unique = true)
-    private String name;
+    private String username;
 
     @NotBlank(message = "password is required")
     @Size(min = 8, message = "password must be at least 8 characters long")
@@ -47,11 +47,11 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

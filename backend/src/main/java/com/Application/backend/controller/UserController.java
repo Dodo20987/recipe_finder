@@ -9,10 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
-public class ApiControllers {
+@CrossOrigin(origins = "http://10.0.0.86:8081")
+public class UserController {
 
     @Autowired
     private UserRepo userRepo;
@@ -22,8 +24,8 @@ public class ApiControllers {
     private AuthService authService;
 
     @GetMapping("/")
-    public String getPage() {
-        return "test";
+    public String getPage(Principal principal) {
+        return "Testing hello, " + principal.getName();
     }
 
     @GetMapping("/users")
@@ -34,6 +36,8 @@ public class ApiControllers {
     // registers a new user, and saves the hash of the password to the database
     @PostMapping("/save")
     public Integer saveUser(@RequestBody User user) {
+        System.out.println("request received from: ");
+        System.out.println(user.getUsername());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepo.save(user);
         return 201;
@@ -43,7 +47,6 @@ public class ApiControllers {
     @PostMapping("/login")
     public Integer loginUser(@RequestBody LoginRequest request) {
         try {
-            // TODO: try to log in via password and username/email
             boolean isFound = authService.authenticate(request.getName(), request.getPassword());
             if(!isFound) {
                 throw new EntityNotFoundException("Incorrect password or username/email entered");
@@ -61,8 +64,8 @@ public class ApiControllers {
         try {
 
             User updatedUser = userRepo.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
-            if(user.getName() != null && !user.getName().isEmpty())
-                updatedUser.setName(user.getName());
+            if(user.getUsername() != null && !user.getUsername().isEmpty())
+                updatedUser.setUsername(user.getUsername());
 
             if(user.getPassword() != null && !user.getPassword().isEmpty())
                 updatedUser.setPassword(passwordEncoder.encode(user.getPassword()));

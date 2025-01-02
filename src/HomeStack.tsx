@@ -8,19 +8,25 @@ import Home from "./Home";
 import Recipe from './Recipe';
 import DisplayRandom from './DisplayRandom';
 import DisplaySearchResults from './DisplaySearchResults';
-const Stack = createNativeStackNavigator();
+import PasswordInput from './PasswordInput';
+import { RootStackParamList } from './types';
+const Stack = createNativeStackNavigator<RootStackParamList>();
 const HomeStack = () => {
     return (
     <Stack.Navigator>
         <Stack.Screen 
-        name = "Home"
-        component={Home}
-        options={{title:'Home'}}/>
-        <Stack.Screen 
         name = "Login"
         component={Login}
         options={{title:'Login'}}/>
-
+       <Stack.Screen 
+        name = "Home"
+        component={Home}
+        options={{title:'Home'}}/>
+        <Stack.Screen
+        name = "PasswordInput"
+        component={PasswordInput}
+        options={{title:"PasswordInput"}}
+        />
         <Stack.Screen 
         name = "Signup"
         component={Signup}
@@ -30,8 +36,6 @@ const HomeStack = () => {
         name = "Recipe"
         component={Recipe}
         options={{title:'Recipe'}}/>
-
-
       </Stack.Navigator>
     );
 }
