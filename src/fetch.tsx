@@ -72,12 +72,14 @@ export const getArea = async (link: string, setAreaInfo: React.Dispatch<React.Se
 }
 
 // a general fetch function for get requests
-export const getData = async (link : string, setData : React.Dispatch<React.SetStateAction<any>>) => {
+// this function will be for api calls that require authentication
+export const getData = async (link : string, setData : React.Dispatch<React.SetStateAction<any>>, jwtToken : string) => {
     try {
         const response = await axios.get(link, {
             headers : {
                 "Content-Type" : "application/json",
                 "Accept" : "application/json"
+                "Authorization" : `Bearer ${jwtToken}`
             }
         });
         const data = response.data;
@@ -108,35 +110,28 @@ export const getRandomRecipe = async (link : string, setData : React.Dispatch<Re
 
 export const registerAccount = async (link : string, userObj : User) => {
     console.log("account register entered");
+    console.log(link);
     try {
         const params = {
-            "name": userObj.name,
+            "username": userObj.name,
             "password": userObj.password,
             ...(userObj.email !== undefined && { email: userObj.email })
         };
+        console.log(params);
         const response = await axios.post(link,params,{
             headers : {
                 "Content-Type" : "application/json"
             }
         });
 
-        //console.log("account registered sucessfully: ", response.data);
+        console.log("account registered sucessfully: ", response.data);
         return response.data;
     }
     catch(error) {
         console.error("there was an error with the fetch operation", error)
     }
 }
-export const testFunc = async () => {
-    console.log("testing");
-    try {
-        const response = await axios.get("http://10.0.0.86:8080/");
-        console.log("data : ",response.data);
-    }
-    catch(error) {
-        console.error(error);
-    }
-}
+
 export const saveToFavourites = async (link : string, favouriteObj : Favourite) => {
     try {
         const response = await axios.post(link,{
@@ -164,26 +159,29 @@ export const login = async (link: string, loginObj : loginRequest, setSuccess : 
             name : loginObj.name,
             password : loginObj.password
         };
-        const response = await axios.post(link,params,
+        console.log(link);
+
+        const encodedCredentials = btoa(`${loginObj.name}:${loginObj.password}`);
+        
+        const response = await axios.post(link,null,
          {
             headers : {
-                "Content-Type" : "application/json"
+                "Authorization" : `Basic ${encodedCredentials}`
             }
         })
 
-        if(response.data === 200) {
-            setSuccess(true);
-            console.log("login successful");
-            return true;
-        }
-        console.log("login failed");
-        setSuccess(false)
-        return false;
+        setSuccess(true);
+        console.log("login successful");
+        console.log(response.data);
+        return true;
+        
     }
     catch(error) {
-        console.error("There was a problem with the fetch operation");
+        console.error("There was a problem with the fetch operation", error);
         console.log("login failed");
         setSuccess(false);
         throw error;
     }
 }
+
+

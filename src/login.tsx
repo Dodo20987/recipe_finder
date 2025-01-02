@@ -5,6 +5,7 @@ import { RootStackParamList, loginRequest } from './types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { login } from './fetch';
 import { useAuth } from './AuthContext';
+import * as keychain from "react-native-keychain";
 type navigationProps = NativeStackNavigationProp<RootStackParamList>;
 import "../global.css";
 const Login: React.FC = () => {
@@ -15,16 +16,15 @@ const Login: React.FC = () => {
     const [RegisterPressed, setRegisterPressed] = useState<boolean>(false);
     const [success, setSuccess] = useState<boolean>(false);
     const {loggedIn, setLoggedIn} = useAuth();
-    console.log("error: ", error)
     const handleSubmit = async () => {
         const loginObj : loginRequest = {name : "", password : ""};
         loginObj.name = nameRef.current;
         loginObj.password = passwordRef.current;
-        const link = process.env.EXPO_PUBLIC_API_BASE + "/login";
+        const link = process.env.EXPO_PUBLIC_API_BASE + "/token";
         await login(link, loginObj, setSuccess);
     }
-    useEffect(() => {
 
+    useEffect(() => {
         if(success) {
             navigation.replace("Home");
             setLoggedIn(true);
