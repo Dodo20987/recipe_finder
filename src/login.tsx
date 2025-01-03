@@ -5,8 +5,8 @@ import { RootStackParamList, loginRequest } from './types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { login } from './fetch';
 import { useAuth } from './AuthContext';
-import * as keychain from "react-native-keychain";
 type navigationProps = NativeStackNavigationProp<RootStackParamList>;
+
 import "../global.css";
 const Login: React.FC = () => {
     const navigation = useNavigation<navigationProps>();

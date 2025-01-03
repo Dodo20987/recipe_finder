@@ -1,7 +1,8 @@
 import {API_KEY, API_HOST} from "@env";
 import axios from "axios";
-
-import {Favourite, User, loginRequest} from "./types"
+import {Favourite, User, loginRequest, MealItem} from "./types"
+import * as SecureStore from "expo-secure-store";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export const getMealByID = async (link: string, setRecipeInfo : React.Dispatch<React.SetStateAction<any>>) => {
     try {
         const response = await axios.get(link, {
@@ -78,7 +79,7 @@ export const getData = async (link : string, setData : React.Dispatch<React.SetS
         const response = await axios.get(link, {
             headers : {
                 "Content-Type" : "application/json",
-                "Accept" : "application/json"
+                "Accept" : "application/json",
                 "Authorization" : `Bearer ${jwtToken}`
             }
         });
@@ -159,8 +160,7 @@ export const login = async (link: string, loginObj : loginRequest, setSuccess : 
             name : loginObj.name,
             password : loginObj.password
         };
-        console.log(link);
-
+        
         const encodedCredentials = btoa(`${loginObj.name}:${loginObj.password}`);
         
         const response = await axios.post(link,null,
@@ -171,8 +171,8 @@ export const login = async (link: string, loginObj : loginRequest, setSuccess : 
         })
 
         setSuccess(true);
+        await SecureStore.setItemAsync("jwt", response.data);
         console.log("login successful");
-        console.log(response.data);
         return true;
         
     }
@@ -184,4 +184,36 @@ export const login = async (link: string, loginObj : loginRequest, setSuccess : 
     }
 }
 
+export const storeUserData = async (link : string, username : string, token : string) => {
+
+  try {
+    const response = await axios.get(link, {
+      "username" : username
+    },
+    {
+      headers : {
+        "Content-Type" : "application/json",
+        "Accept" : "application/json",
+        "Authorization" : `Bearer ${token}`
+      }
+    });
+    await AsyncStorage.setItem("user",JSON.stringify(response.data));
+
+  }
+  catch(error) {
+    console.error("There was an error with the fetch operation", error);
+  }
+}
+
+export const getUserData = async () => {
+
+  try {
+    const userInfo = await AsyncStorage.getItem("user");
+
+    return userInfo != null ? JSON.parse(userInfo) : null;
+  }
+  catch(error) {
+    console.error("There was an error with getting user data from AsyncStorage", error);
+  }
+}
 

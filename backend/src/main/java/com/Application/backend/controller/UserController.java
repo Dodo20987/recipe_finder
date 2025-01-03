@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://10.0.0.86:8081")
@@ -31,6 +32,11 @@ public class UserController {
     @GetMapping("/users")
     public List<User> getUsers() {
         return userRepo.findAll();
+    }
+
+    @GetMapping("/user")
+    public Optional<User> getUser(@RequestBody String username) {
+        return userRepo.findByUsername(username);
     }
 
     // registers a new user, and saves the hash of the password to the database
