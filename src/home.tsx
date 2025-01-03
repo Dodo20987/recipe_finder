@@ -1,8 +1,7 @@
 import {Text, View, TextInput, Pressable,ScrollView} from 'react-native';
 import { useState, useEffect, useRef} from 'react';
 import Filter from './Filter';
-import {getRandomRecipe} from "./fetch"
-import { getCategories, getData} from './fetch';
+import { getCategories, getData, getRandomRecipe, storeUserData, getUserData } from './fetch';
 import DisplaySearchResults from './DisplaySearchResults';
 import DisplayRandom from './DisplayRandom';
 import { MealItem } from './types';
@@ -16,6 +15,7 @@ const Home: React.FC  = () => {
     const [recipeName, setRecipeName] = useState<string>("");
     const [searchResults, setSearchResults] = useState<any[]>([]);
     const [displayResults, setDisplayResults] = useState<MealItem[]>([]);
+    const [userName, setUserName] = useState<string>("");
     const recipeRef = useRef(recipeName);
 
     useEffect(() => {
@@ -54,10 +54,6 @@ const Home: React.FC  = () => {
     },[searchResults])
 
     useEffect(() => {
-    // 
-   },[displayResults])
-
-    useEffect(() => {
         const getToken = async () => {
           let result = await SecureStore.getItemAsync("jwt");
           if(result) {
@@ -65,7 +61,10 @@ const Home: React.FC  = () => {
             console.log("Your jwt token is: ", result);
             const decoded = jwtDecode(result);
             console.log("name: ", decoded.sub);
-             
+            const link = process.env.EXPO_PUBLIC_API_BASE + "/user?username=" + decoded.sub;
+            storeUserData(link,decoded.sub,result);             
+            const userData = await getUserData();
+            setUserName(decoded.sub);
           }
           else {
             console.log("No values stored under the key 'jwt'");
@@ -74,10 +73,16 @@ const Home: React.FC  = () => {
 
         getToken();
         getCategories(process.env.EXPO_PUBLIC_CATEGORY_LINK || "", setCategoryInfo);
-
-
     },[])
+   
+  /*
+    useEffect(() => {
+      if (userName !== "") {
 
+      }
+
+    },[UserName])
+*/
     useEffect(() => {
         if(categoryInfo) {
             const tempCategory = categoryInfo["meals"].map((item : any, index : number) => 
@@ -97,7 +102,7 @@ const Home: React.FC  = () => {
                 <View className='border-black 
                 m-4'>
                     <Text className='text-2xl font-bold'>
-                        Hi, UserName
+                        Hi, {userName} 
                     </Text>
                 </View>
                 <View className='m-4'>

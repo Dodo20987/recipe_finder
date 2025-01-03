@@ -185,15 +185,15 @@ export const login = async (link: string, loginObj : loginRequest, setSuccess : 
 }
 
 export const storeUserData = async (link : string, username : string, token : string) => {
-
+  
+  console.log("storing data");
+  console.log(link);
+  console.log(username);
   try {
-    const response = await axios.get(link, {
-      "username" : username
-    },
-    {
+    const response = await axios.get(link,
+      {
       headers : {
         "Content-Type" : "application/json",
-        "Accept" : "application/json",
         "Authorization" : `Bearer ${token}`
       }
     });
@@ -206,10 +206,11 @@ export const storeUserData = async (link : string, username : string, token : st
 }
 
 export const getUserData = async () => {
-
+  console.log("getting userdata");
   try {
     const userInfo = await AsyncStorage.getItem("user");
-
+    
+    console.log("userInfo: ", userInfo);
     return userInfo != null ? JSON.parse(userInfo) : null;
   }
   catch(error) {
