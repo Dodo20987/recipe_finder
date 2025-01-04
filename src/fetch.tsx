@@ -211,6 +211,7 @@ export const getUserData = async () => {
     const userInfo = await AsyncStorage.getItem("user");
     
     console.log("userInfo: ", userInfo);
+    // returns a json obj with id, username, and password fields
     return userInfo != null ? JSON.parse(userInfo) : null;
   }
   catch(error) {

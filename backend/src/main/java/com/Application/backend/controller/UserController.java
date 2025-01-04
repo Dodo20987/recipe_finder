@@ -35,7 +35,9 @@ public class UserController {
     }
 
     @GetMapping("/user")
-    public Optional<User> getUser(@RequestBody String username) {
+    public Optional<User> getUser(@RequestParam String username) {
+        System.out.println("getting user info: ");
+        System.out.println(username);
         return userRepo.findByUsername(username);
     }
 
@@ -47,22 +49,6 @@ public class UserController {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepo.save(user);
         return 201;
-    }
-
-    // logging in a user
-    @PostMapping("/login")
-    public Integer loginUser(@RequestBody LoginRequest request) {
-        try {
-            boolean isFound = authService.authenticate(request.getName(), request.getPassword());
-            if(!isFound) {
-                throw new EntityNotFoundException("Incorrect password or username/email entered");
-            }
-            return 200;
-
-        }
-        catch(EntityNotFoundException e) {
-           return 401;
-        }
     }
 
     @PutMapping("/update/{id}")

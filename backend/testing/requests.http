@@ -1,6 +1,14 @@
 ### get home page
-GET http://localhost:8080/
+GET http://10.0.0.86:8080/
 Authorization: Basic jayde:password
+
+### get user
+POST http://10.0.0.86:8080/user
+Authorization: : Basic jayde:password
+Content-Type: application/json
+{
+    "chicken"
+}
 
 ### getting a token
 POST http://10.0.0.86:8080/token
@@ -20,6 +28,7 @@ Content-Type: application/json
 }
 
 ### login
+
 POST http://localhost:8080/login
 Content-Type: application/json
 
