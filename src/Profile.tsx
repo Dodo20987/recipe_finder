@@ -46,7 +46,7 @@ const Profile = () => {
     setToken(await getToken());
     setInfoUpdate(true);
   }
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
     console.log("Deleting account");
     seToken(await getToken());
     setRemoveInfo(true);
