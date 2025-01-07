@@ -21,8 +21,8 @@ const PasswordInput: React.FC<PasswordInputProps> = ({route}) => {
         /*if(passwordRef.current !== passwordConfirmRef.current) {
             errorRef.current = "Error: Passwords are not matching";
         }*/
-        const userObj : User = {name : "", password : ""};
-        userObj.name = name;
+        const userObj : User = {username : "", password : ""};
+        userObj.username = name;
         userObj.password = passwordRef.current;
         userObj.email = (email !== "" && email) ? email : undefined;
         const link = process.env.EXPO_PUBLIC_API_BASE + "/save";

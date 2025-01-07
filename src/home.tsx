@@ -70,19 +70,11 @@ const Home: React.FC  = () => {
             console.log("No values stored under the key 'jwt'");
           }
         }
-
         getToken();
         getCategories(process.env.EXPO_PUBLIC_CATEGORY_LINK || "", setCategoryInfo);
     },[])
    
-  /*
-    useEffect(() => {
-      if (userName !== "") {
 
-      }
-
-    },[UserName])
-*/
     useEffect(() => {
         if(categoryInfo) {
             const tempCategory = categoryInfo["meals"].map((item : any, index : number) => 
