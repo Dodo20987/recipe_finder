@@ -1,5 +1,5 @@
 import {Text, View, TextInput, Pressable} from "react-native"
-import {getUserData, updateUserData, getToken, logout} from "./fetch.tsx"
+import {getUserData, updateUserData, getToken, logout,deleteUser } from "./fetch.tsx"
 import {useState, useEffect, useRef} from "react";
 import {MaterialIcons} from "@expo/vector-icons";
 import {UserUpdateRequest} from "./types.ts"
@@ -16,6 +16,7 @@ const Profile = () => {
   const [token,setToken] = useState<string>("");
   const [infoUpdate, setInfoUpdate] = useState<boolean>(false);
   const [removeInfo, setRemoveInfo] = useState<boolean>(false);
+  const [errorInfo, setErrorInfo] = useState<string>("");
   const usernameRef = useRef<string>("");
   const passwordRef = useRef<string>("");
   const emailRef = useRef<string>("");
@@ -48,7 +49,7 @@ const Profile = () => {
   }
   const handleDeleteAccount = async () => {
     console.log("Deleting account");
-    seToken(await getToken());
+    setToken(await getToken());
     setRemoveInfo(true);
   }
 
@@ -58,29 +59,44 @@ const Profile = () => {
     const updateInfo = async () => {
       if(token !== "" && token) {
         let userObj : UserUpdateRequest = {};
-        userObj.username = (usernameRef.current !== "") ? usernameRef.current : undefined;
-        userObj.password = (passwordRef.current !== "") ? passwordRef.current : undefined;
-        userObj.email = (emailRef.current !== "" && emailRef.current) ? emailRef.current : undefined;
+        userObj.username = (usernameRef.current.length > 0) ? usernameRef.current : undefined;
+        userObj.password = (passwordRef.current.length > 0) ? passwordRef.current : undefined;
+        userObj.email = (emailRef.current.length > 0 && emailRef.current) ? emailRef.current : undefined;
         console.log("updated obj: ", userObj);
         const link = process.env.EXPO_PUBLIC_API_BASE + "/update/" + userID.toString();
         if(await updateUserData(link,userObj,token)) {
           setInfoUpdate(false);
           navigation.navigate("Login");
         }
+        else {
+          setErrorInfo("Error: failed to update user information");
+        }
       }
     }
 
     const deleteAccount = async () => {
+      console.log("d1");
       if(token !== "" && token) {
-       setRemoveInfo(false);
+        console.log("d2")
+        const link = process.env.EXPO_PUBLIC_API_BASE + "/delete/" + userID.toString();
+        setRemoveInfo(false);
+        //const link = process.env.EXPO_PUBLIC_API_BASE + "/delete/" + UserID.toString();
+        console.log("d3")
+        if(await deleteUser(link, token)) {
+          setRemoveInfo(false);
+          navigation.navigate("Login");
+        }
+        else {
+          setErrorInfo("Error: failed to delete user account");
+        }
       }
     }
 
     if (infoUpdate)
       updateInfo();
-    else if (delete)
+    else if (removeInfo)
       deleteAccount();
-  },[token, infoUpdate, removeInfo])
+  },[token, infoUpdate, removeInfo]);
 
   return (
     <View className = "flex-1 items-center">
@@ -138,7 +154,8 @@ const Profile = () => {
             <Text className = "text-white">SUBMIT CHANGES</Text>
           </Pressable>
 
-          <Pressable className = "flex items-center border-2 border-black bg-red-800 rounded-lg p-2 w-6/12 mt-8">
+          <Pressable className = "flex items-center border-2 border-black bg-red-800 rounded-lg p-2 w-6/12 mt-8"
+          onPress={handleDeleteAccount}>
             <Text className = "text-white">DELETE ACCOUNT</Text>
           </Pressable>
 

@@ -234,22 +234,22 @@ export const updateUserData =  async(link : string, userObj : UserUpdateRequest,
   }
 }
 export const deleteUser = async(link : string, token : string) => {
-  console.log("deleting user");
   try {
-    const response = await axios.delete(link, {}, {
+    const response = await axios.delete(link, {
       headers : {
         "Authorization" : `Bearer ${token}`
       }
     });
     console.log("User has been successfully deleted");
+    return true;
   }
   catch(error) {
     console.error("There was an error with the fetch operation", error);
+    return false;
   }
 }
 
 export const getUserData = async () => {
-  console.log("getting userdata");
   try {
     const userInfo = await AsyncStorage.getItem("user");
     
@@ -279,9 +279,7 @@ export const logout = async () => {
 
 export const getToken = async() => {
   console.log("getting token");
-  console.log(1);
   let result = await SecureStore.getItemAsync("jwt");
-  console.log(2);
   if (result) {
     // retuns a promise therefore function must be called in an async await wrapper
     console.log("got token");
