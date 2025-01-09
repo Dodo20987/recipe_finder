@@ -1,7 +1,8 @@
 import {API_KEY, API_HOST} from "@env";
 import axios from "axios";
-
-import {Favourite, User, loginRequest} from "./types"
+import {Favourite, User, loginRequest, MealItem, UserUpdateRequest} from "./types"
+import * as SecureStore from "expo-secure-store";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export const getMealByID = async (link: string, setRecipeInfo : React.Dispatch<React.SetStateAction<any>>) => {
     try {
         const response = await axios.get(link, {
@@ -78,7 +79,7 @@ export const getData = async (link : string, setData : React.Dispatch<React.SetS
         const response = await axios.get(link, {
             headers : {
                 "Content-Type" : "application/json",
-                "Accept" : "application/json"
+                "Accept" : "application/json",
                 "Authorization" : `Bearer ${jwtToken}`
             }
         });
@@ -111,10 +112,11 @@ export const getRandomRecipe = async (link : string, setData : React.Dispatch<Re
 export const registerAccount = async (link : string, userObj : User) => {
     console.log("account register entered");
     console.log(link);
+    console.log(userObj);
     try {
         const params = {
-            "username": userObj.name,
-            "password": userObj.password,
+            username: userObj.username,
+            password: userObj.password,
             ...(userObj.email !== undefined && { email: userObj.email })
         };
         console.log(params);
@@ -159,8 +161,7 @@ export const login = async (link: string, loginObj : loginRequest, setSuccess : 
             name : loginObj.name,
             password : loginObj.password
         };
-        console.log(link);
-
+        
         const encodedCredentials = btoa(`${loginObj.name}:${loginObj.password}`);
         
         const response = await axios.post(link,null,
@@ -171,8 +172,8 @@ export const login = async (link: string, loginObj : loginRequest, setSuccess : 
         })
 
         setSuccess(true);
+        await SecureStore.setItemAsync("jwt", response.data);
         console.log("login successful");
-        console.log(response.data);
         return true;
         
     }
@@ -184,4 +185,107 @@ export const login = async (link: string, loginObj : loginRequest, setSuccess : 
     }
 }
 
+export const storeUserData = async (link : string, username : string, token : string) => {
+  
+  console.log("storing data");
+  console.log(link);
+  console.log(username);
+  try {
+    const response = await axios.get(link,
+      {
+      headers : {
+        "Content-Type" : "application/json",
+        "Authorization" : `Bearer ${token}`
+      }
+    });
+    await AsyncStorage.setItem("user",JSON.stringify(response.data));
 
+  }
+  catch(error) {
+    console.error("There was an error with the fetch operation", error);
+  }
+}
+
+export const updateUserData =  async(link : string, userObj : UserUpdateRequest, token : string) => {
+  console.log("updating user data");
+  console.log(link);
+  try {
+    
+    // all optional fields so that, when the user wants to update their information
+    // they are not requried to update every single piece of information in their account
+    const params = {
+      ...(userObj.username !== undefined && {username: userObj.username}),
+      ...(userObj.password !== undefined && {password: userObj.password}),
+      ...(userObj.email !== undefined && { email: userObj.email })
+    };
+    
+    const response = await axios.put(link, params, {
+      headers : {
+        "Content-Type" : "application/json",
+        "Authorization" : `Bearer ${token}`
+      }
+    });
+    console.log("user information has successfully been updated");
+    return true;
+  }
+  catch (error) {
+    console.error("There was an error with the fetch operation: ", error);
+    return false;
+  }
+}
+export const deleteUser = async(link : string, token : string) => {
+  try {
+    const response = await axios.delete(link, {
+      headers : {
+        "Authorization" : `Bearer ${token}`
+      }
+    });
+    console.log("User has been successfully deleted");
+    return true;
+  }
+  catch(error) {
+    console.error("There was an error with the fetch operation", error);
+    return false;
+  }
+}
+
+export const getUserData = async () => {
+  try {
+    const userInfo = await AsyncStorage.getItem("user");
+    
+    console.log("userInfo: ", userInfo);
+    // returns a json obj with id, username, and password fields
+    return userInfo != null ? JSON.parse(userInfo) : null;
+  }
+  catch(error) {
+    console.error("There was an error with getting user data from AsyncStorage", error);
+  }
+}
+
+export const logout = async () => {
+  console.log("logging out");
+  try {
+    // removing username from async storage
+    await AsyncStorage.removeItem("user");
+
+    // remvoing the jwtToken from SecureStore
+    let result = await SecureStore.deleteItemAsync("jwt");
+    
+  }
+  catch (error) {
+    console.error("error", error);
+  }
+}
+
+export const getToken = async() => {
+  console.log("getting token");
+  let result = await SecureStore.getItemAsync("jwt");
+  if (result) {
+    // retuns a promise therefore function must be called in an async await wrapper
+    console.log("got token");
+    return result;
+  }
+  else {
+    console.log("there is no jwt token");
+  }
+}

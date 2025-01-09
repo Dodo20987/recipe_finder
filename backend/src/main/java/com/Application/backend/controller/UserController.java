@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://10.0.0.86:8081")
@@ -33,6 +34,13 @@ public class UserController {
         return userRepo.findAll();
     }
 
+    @GetMapping("/user")
+    public Optional<User> getUser(@RequestParam String username) {
+        System.out.println("getting user info: ");
+        System.out.println(username);
+        return userRepo.findByUsername(username);
+    }
+
     // registers a new user, and saves the hash of the password to the database
     @PostMapping("/save")
     public Integer saveUser(@RequestBody User user) {
@@ -41,22 +49,6 @@ public class UserController {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepo.save(user);
         return 201;
-    }
-
-    // logging in a user
-    @PostMapping("/login")
-    public Integer loginUser(@RequestBody LoginRequest request) {
-        try {
-            boolean isFound = authService.authenticate(request.getName(), request.getPassword());
-            if(!isFound) {
-                throw new EntityNotFoundException("Incorrect password or username/email entered");
-            }
-            return 200;
-
-        }
-        catch(EntityNotFoundException e) {
-           return 401;
-        }
     }
 
     @PutMapping("/update/{id}")

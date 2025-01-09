@@ -1,17 +1,25 @@
 ### get home page
-GET http://localhost:8080/
+GET http://10.0.0.86:8080/
 Authorization: Basic jayde:password
 
+### get user
+POST http://10.0.0.86:8080/user
+Authorization: : Basic jayde:password
+Content-Type: application/json
+{
+    "chicken"
+}
+
 ### getting a token
-POST http://localhost:8080/token
+POST http://10.0.0.86:8080/token
 Authorization: Basic chicken:cat
 
 ### get all users
-GET  http://localhost:8080/users
+GET  http://10.0.0.86:8080/users
 Authorization: Basic chicken:cat
 
 ### Inserting a user into the database
-POST http://localhost:8080/save
+POST http://10.0.0.86:8080/save
 Content-Type: application/json
 
 {
@@ -20,6 +28,7 @@ Content-Type: application/json
 }
 
 ### login
+
 POST http://localhost:8080/login
 Content-Type: application/json
 

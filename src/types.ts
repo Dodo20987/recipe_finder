@@ -6,9 +6,14 @@ export interface MealItem {
 }
 
 export interface User {
-  name : string;
+  username : string;
   password : string;
   email?: string;
+}
+export interface UserUpdateRequest {
+  username? : string;
+  password? : string;
+  email? : string
 }
 export interface loginRequest {
   name: string;
