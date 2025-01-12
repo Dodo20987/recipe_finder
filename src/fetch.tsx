@@ -1,4 +1,4 @@
-import {API_KEY, API_HOST} from "@env";
+import {API_KEY} from "@env";
 import axios from "axios";
 import {Favourite, User, loginRequest, MealItem, UserUpdateRequest} from "./types"
 import * as SecureStore from "expo-secure-store";
@@ -157,10 +157,6 @@ export const saveToFavourites = async (link : string, favouriteObj : Favourite) 
 
 export const login = async (link: string, loginObj : loginRequest, setSuccess : React.Dispatch<React.SetStateAction<any>>) => {
     try {
-        const params = {
-            name : loginObj.name,
-            password : loginObj.password
-        };
         
         const encodedCredentials = btoa(`${loginObj.name}:${loginObj.password}`);
         
@@ -267,10 +263,10 @@ export const logout = async () => {
   try {
     // removing username from async storage
     await AsyncStorage.removeItem("user");
-
     // remvoing the jwtToken from SecureStore
-    let result = await SecureStore.deleteItemAsync("jwt");
+    await SecureStore.deleteItemAsync("jwt");
     
+    console.log("sucessfully logged out");
   }
   catch (error) {
     console.error("error", error);
@@ -279,7 +275,7 @@ export const logout = async () => {
 
 export const getToken = async() => {
   console.log("getting token");
-  let result = await SecureStore.getItemAsync("jwt");
+  const result = await SecureStore.getItemAsync("jwt");
   if (result) {
     // retuns a promise therefore function must be called in an async await wrapper
     console.log("got token");

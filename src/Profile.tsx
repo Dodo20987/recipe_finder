@@ -6,6 +6,7 @@ import {UserUpdateRequest} from "./types.ts"
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from './types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import React from "react";
 type navigationProps = NativeStackNavigationProp<RootStackParamList>;
 
 
@@ -16,7 +17,7 @@ const Profile = () => {
   const [token,setToken] = useState<string>("");
   const [infoUpdate, setInfoUpdate] = useState<boolean>(false);
   const [removeInfo, setRemoveInfo] = useState<boolean>(false);
-  const [errorInfo, setErrorInfo] = useState<string>("");
+  //const [errorInfo, setErrorInfo] = useState<string>("");
   const usernameRef = useRef<string>("");
   const passwordRef = useRef<string>("");
   const emailRef = useRef<string>("");
@@ -58,7 +59,7 @@ const Profile = () => {
   useEffect(() => {
     const updateInfo = async () => {
       if(token !== "" && token) {
-        let userObj : UserUpdateRequest = {};
+        const userObj : UserUpdateRequest = {};
         userObj.username = (usernameRef.current.length > 0) ? usernameRef.current : undefined;
         userObj.password = (passwordRef.current.length > 0) ? passwordRef.current : undefined;
         userObj.email = (emailRef.current.length > 0 && emailRef.current) ? emailRef.current : undefined;
@@ -102,7 +103,7 @@ const Profile = () => {
     <View className = "flex-1 items-center">
       {/*<!-- profile header containing current name and empty user profile picture -->*/}
       <View className = "flex items-center border-2 border-black w-full bg-orange-600">
-        <Text className = "font-bold text-lg text-white mb-8">{username}'s profile</Text>
+        <Text className = "font-bold text-lg text-white mb-8">{username}&apos; profile</Text>
         <View>
           <MaterialIcons name="account-circle" size = {120} color = "white" />
         </View>
