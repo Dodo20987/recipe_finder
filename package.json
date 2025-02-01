@@ -32,9 +32,14 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@eslint/js": "^9.18.0",
     "@types/react": "~18.2.45",
+    "eslint": "^9.18.0",
+    "eslint-plugin-react": "^7.37.3",
+    "globals": "^15.14.0",
     "react-native-dotenv": "^3.4.11",
-    "typescript": "~5.3.3"
+    "typescript": "~5.3.3",
+    "typescript-eslint": "^8.19.1"
   },
   "private": true
 }

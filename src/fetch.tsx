@@ -1,6 +1,6 @@
 import {API_KEY} from "@env";
 import axios from "axios";
-import {Favourite, User, loginRequest, MealItem, UserUpdateRequest} from "./types"
+import {Favourite, User, loginRequest, UserUpdateRequest} from "./types"
 import * as SecureStore from "expo-secure-store";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 export const getMealByID = async (link: string, setRecipeInfo : React.Dispatch<React.SetStateAction<any>>) => {
@@ -33,6 +33,7 @@ export const getMealByName = async (link : string, name : string) => {
         });
 
         const data = response.data;
+        return data;
     }
     catch (error) {
         console.error("There was an error with the fetch operation", error); 

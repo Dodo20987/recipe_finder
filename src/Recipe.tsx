@@ -1,10 +1,10 @@
 import {View, Text, ImageBackground, ActivityIndicator, ScrollView, Pressable} from "react-native";
-import { getMealByID } from "./fetch";
-import { useState, useEffect } from "react";
+import { getMealByID,saveToFavourites  } from "./fetch";
+import { useState, useEffect, React } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React from "react";
-import { RootStackParamList } from "./types";
+import { RootStackParamList, Favourite } from "./types";
 import { MaterialIcons} from "@expo/vector-icons";
+
 
 
 type RecipeInputProps = NativeStackScreenProps<RootStackParamList, "Recipe">
@@ -14,11 +14,38 @@ const Recipe : React.FC<RecipeInputProps> = ({route}) => {
     const [displayInfo, setDisplayInfo] = useState();
     const [favoritePress, setFavoritePress] = useState(false);
     const {ID} = route.params;
+    const [userName, setUserName] = useState<string>("");
+    
+    // TODO: need to fetch userID and username
     useEffect(() => {
+        const getToken = async () => {
+          const result = await SecureStore.getItemAsync("jwt");
+          if(result) {
+            // username is decoded.sub
+            console.log("Your jwt token is: ", result);
+            const decoded = jwtDecode(result);
+            console.log("name: ", decoded.sub);
+            const link = process.env.EXPO_PUBLIC_API_BASE + "/user?username=" + decoded.sub;
+            //const userData = await getUserData();
+            setUserName(decoded.sub);
+          }
+          else {
+            console.log("No values stored under the key 'jwt'");
+          }
+        }
+        getToken();
         getMealByID(process.env.EXPO_PUBLIC_RECIPE_LOOKUP_LINK + "?i=" + ID || "", setRecipeInfo);
     },[])
     
     const handleFavoritePress = () => {
+      console.log("Fav pressed");
+      const link = process.env.EXPO_PUBLIC_API_BASE + "/saveFavourite";
+      const favouriteObj : Favourite = {
+        recipe_id : ID,
+        userID :1,
+        name : userName
+      };
+      saveToFavourites(link, favouriteObj);
       setFavoritePress(!favoritePress);
     }
     useEffect(() => {

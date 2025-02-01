@@ -22,7 +22,7 @@ export interface loginRequest {
 export interface Favourite {
   recipeID : number;
   userID : number;
-  name : string;
+  name? : string;
 }
 
 export type RootStackParamList = {
