@@ -23,6 +23,11 @@ export interface Favourite {
   recipeID : number;
   userID : number;
   name? : string;
+  image : string;
+  tags : string;
+  area : string;
+  category : string;
+
 }
 
 export type RootStackParamList = {

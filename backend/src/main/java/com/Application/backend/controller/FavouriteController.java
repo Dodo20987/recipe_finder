@@ -25,6 +25,11 @@ public class FavouriteController {
     public ResponseEntity<Optional<List<Favourite>>> getFavourites(@PathVariable long id) {
         try {
             Optional<List<Favourite>> temp = favouriteRepo.findById_UserID(id);
+            if (temp.isPresent()) {
+                System.out.println("list: " + temp.get()); // Will print the list
+            } else {
+                System.out.println("No favourites found for userID: " + id);
+            }
             if(temp.isEmpty()) {
                 throw new EntityNotFoundException("User not found");
             }
@@ -34,22 +39,6 @@ public class FavouriteController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Optional.empty());
         }
     }
-
-
-    // list the favourite recipes for a particular user, using the username
-    public ResponseEntity<Optional<List<Favourite>>> getFavouritesWithUsername(@RequestBody String username) {
-        try {
-            Optional<List<Favourite>> temp = favouriteRepo.findByUsername(username);
-            if(temp.isEmpty()) {
-                throw new EntityNotFoundException(String.format("user with name: %s not found", username));
-            }
-            return ResponseEntity.ok(temp);
-        }
-        catch(EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Optional.empty());
-        }
-    }
-
 
     // lists a single favourite recipe for a user
     @GetMapping("/favourite")
@@ -70,7 +59,10 @@ public class FavouriteController {
     // saves associated favourite to user's account
     @PostMapping("/favourite/save")
     public int saveFavourite(@RequestBody Favourite favourite) {
+        System.out.println("saving to database: " + favourite);
         favouriteRepo.save(favourite);
+        List<Favourite> favourites = favouriteRepo.findAll(); // fetch all favourites
+        System.out.println("Favourites after save: " + favourites);
         return 201;
     }
 

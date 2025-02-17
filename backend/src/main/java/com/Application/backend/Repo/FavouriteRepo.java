@@ -8,7 +8,5 @@ import java.util.Optional;
 import java.util.List;
 public interface FavouriteRepo extends JpaRepository<Favourite, CompositeID> {
     public Optional<List<Favourite>> findById_UserID(long userID);
-    public Optional<List<Favourite>> findByUsername(String username);
     public Optional<Favourite> findById_UserIDAndId_RecipeID(long userID, long recipeID);
-    public Optional<Favourite> findByUsernameAndId_RecipeID(String name, long recipeID);
 }

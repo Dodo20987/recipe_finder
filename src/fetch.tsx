@@ -75,6 +75,7 @@ export const getArea = async (link: string, setAreaInfo: React.Dispatch<React.Se
 
 // a general fetch function for get requests
 // this function will be for api calls that require authentication
+/*
 export const getData = async (link : string, setData : React.Dispatch<React.SetStateAction<any>>, jwtToken : string) => {
     try {
         const response = await axios.get(link, {
@@ -92,6 +93,7 @@ export const getData = async (link : string, setData : React.Dispatch<React.SetS
     }
 
 }
+*/
 
 export const getRandomRecipe = async (link : string, setData : React.Dispatch<React.SetStateAction<any>>) => {
     try {
@@ -156,7 +158,7 @@ export const saveToFavourites = async (link : string, favouriteObj : Favourite) 
     }
 }
 
-export const login = async (link: string, loginObj : loginRequest, setSuccess : React.Dispatch<React.SetStateAction<any>>) => {
+export const login = async (link: string, loginObj : loginRequest, setSuccess : React.Dispatch<React.SetStateAction<boolean>>) => {
     try {
         
         const encodedCredentials = btoa(`${loginObj.name}:${loginObj.password}`);
@@ -202,6 +204,43 @@ export const storeUserData = async (link : string, username : string, token : st
     console.error("There was an error with the fetch operation", error);
   }
 }
+export const getFavourites = async (link : string, token : string, setData : React.Dispatch<React.SetStateAction<Favourite[]>>) => {
+  console.log("getting favourites");
+  try {
+    const response = await axios.get(link, {
+      headers : {
+        "Content-Type" : "application/json",
+        "Authorization" : `Bearer ${token}`
+      }
+    });
+    const data = response.data;
+    setData(data);
+    return true;
+  }
+  catch (error) {
+    console.error("There was an error with the fetch operation", error);
+    return false;
+
+  }
+}
+
+export const removeFavourite = async (link : string, token : string) => {
+  console.log("removeing recipe from favourites...");
+  try {
+    await axios.delete(link, {
+      headers : {
+        "Authorization" : `Bearer ${token}`
+      }
+    });
+    console.log("recipe got successfully deleted");
+    return true;
+    
+  }
+  catch(error) {
+    console.error("There was an error with the fetch opertaion", error);
+    return false;
+  }
+}
 
 export const updateUserData =  async(link : string, userObj : UserUpdateRequest, token : string) => {
   console.log("updating user data");
@@ -216,7 +255,7 @@ export const updateUserData =  async(link : string, userObj : UserUpdateRequest,
       ...(userObj.email !== undefined && { email: userObj.email })
     };
     
-    const response = await axios.put(link, params, {
+    await axios.put(link, params, {
       headers : {
         "Content-Type" : "application/json",
         "Authorization" : `Bearer ${token}`
@@ -232,7 +271,7 @@ export const updateUserData =  async(link : string, userObj : UserUpdateRequest,
 }
 export const deleteUser = async(link : string, token : string) => {
   try {
-    const response = await axios.delete(link, {
+    await axios.delete(link, {
       headers : {
         "Authorization" : `Bearer ${token}`
       }
@@ -286,3 +325,8 @@ export const getToken = async() => {
     console.log("there is no jwt token");
   }
 }
+
+
+
+
+

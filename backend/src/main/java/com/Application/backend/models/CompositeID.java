@@ -1,5 +1,7 @@
 package com.Application.backend.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Embeddable;
 
 import java.io.Serializable;
@@ -10,11 +12,20 @@ public class CompositeID implements Serializable {
     private long userID;
 
     CompositeID() {}
-
+    /*
     CompositeID(long recipeID, long userID) {
+        System.out.println("IDS: " + recipeID + " " + userID);
         this.recipeID = recipeID;
         this.userID = userID;
     }
+    */
+    @JsonCreator
+    public CompositeID(@JsonProperty("recipeID") long recipeID,
+                       @JsonProperty("userID") long userID) {
+        this.recipeID = recipeID;
+        this.userID = userID;
+    }
+
 
     public long getUserID() {return userID;}
     public long getRecipeID() {return recipeID;}
@@ -22,6 +33,10 @@ public class CompositeID implements Serializable {
     public void setUserID(long userID) {this.userID = userID;}
     public void setRecipeID(long recipeID) {this.recipeID = recipeID;}
 
+    @Override
+    public String toString() {
+        return "CompositeID{recipeID=" + recipeID + ", userID=" + userID + "}";
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

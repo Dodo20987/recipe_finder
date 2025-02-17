@@ -2,15 +2,19 @@
 GET http://10.0.0.86:8080/
 Authorization: Basic jayde:password
 
+### get home page
+GET http://10.0.0.86:8080/
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiY2hpY2tlbiIsImV4cCI6MTczOTc3ODc5NiwiaWF0IjoxNzM5Nzc1MTk2LCJzY29wZSI6IlVTRVIifQ.sdLSurpjWafoiSx7hf5iymRAlpZbbd3mfBVlHlipLKt3IHjTGGo-MViiiP_NuHQDCQGyjZXCbkx0YN7oN4b-4C-HiLByvm2l754Og6hBWShRVmrAIIxwM6Phmb_GBz9Jaxjnp3RuY5k2DBVM_PoI4wDf0AzYyc52kXac8PU8883KrIpzHsHYpf4Ch-CpU8hGihlYOpbxaXZe8CgMpdYPzWU8VPDrjPsHYQJNWdflsTKlgVQxWFS2bDGszPzBUAebh9GRQLpwdLMsxwipoiX9PFW0yDXwvw1MQYGGPA4ud1Aw3vKxbYKGIAWFG7nLf0kzrVjEVxWS6yj0VkRoSdbcww 
+
 ### get user
-POST http://10.0.0.86:8080/user
-Authorization: : Basic jayde:password
+GET http://10.0.0.86:8080/user
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiY2hpY2tlbiIsImV4cCI6MTczOTc3ODc5NiwiaWF0IjoxNzM5Nzc1MTk2LCJzY29wZSI6IlVTRVIifQ.sdLSurpjWafoiSx7hf5iymRAlpZbbd3mfBVlHlipLKt3IHjTGGo-MViiiP_NuHQDCQGyjZXCbkx0YN7oN4b-4C-HiLByvm2l754Og6hBWShRVmrAIIxwM6Phmb_GBz9Jaxjnp3RuY5k2DBVM_PoI4wDf0AzYyc52kXac8PU8883KrIpzHsHYpf4Ch-CpU8hGihlYOpbxaXZe8CgMpdYPzWU8VPDrjPsHYQJNWdflsTKlgVQxWFS2bDGszPzBUAebh9GRQLpwdLMsxwipoiX9PFW0yDXwvw1MQYGGPA4ud1Aw3vKxbYKGIAWFG7nLf0kzrVjEVxWS6yj0VkRoSdbcww 
 Content-Type: application/json
 {
     "chicken"
 }
 
-### getting a token
+### getting a token / getting a token
 POST http://10.0.0.86:8080/token
 Authorization: Basic chicken:cat
 
@@ -20,16 +24,6 @@ Authorization: Basic chicken:cat
 
 ### Inserting a user into the database
 POST http://10.0.0.86:8080/save
-Content-Type: application/json
-
-{
-    "username" : "chicken",
-    "password" : "cat"
-}
-
-### login
-
-POST http://localhost:8080/login
 Content-Type: application/json
 
 {
@@ -47,3 +41,20 @@ Content-Type: application/json
 {
     "username" : "apples"
 }
+
+### getting the fav list for a user
+GET http://localhost:8080/favourites/1
+Authorization: Basic chicken:cat
+
+### saving a favourite recipe to to a user
+POST http://localhost:8080/favourite/save
+Authorization: Basic chicken:cat
+Content-Type: application/json
+
+{
+    "id" : {
+        "recipeID" : 122,
+        "userID" : 2
+    }
+}
+

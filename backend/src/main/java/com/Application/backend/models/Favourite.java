@@ -7,15 +7,20 @@ import jakarta.validation.constraints.NotBlank;
 @Entity
 @Table(name = "FAVOURITES")
 public class Favourite {
+    public Favourite() {}
+
+    // Constructor that accepts recipeID and userID
+    public Favourite(long recipeID, long userID) {
+        this.id = new CompositeID(recipeID, userID);
+    }
+
     @EmbeddedId
     private CompositeID id;
     public CompositeID getID() {return id;}
     public void setID(CompositeID id) {this.id = id;}
 
-    @NotBlank(message = "username is required")
-    private String username;
-
-    public String getUsername() {return username;}
-    public void setUsername(String username) {this.username = this.username;}
-
+    @Override
+    public String toString() {
+        return "Favourite{id=" + id + "}";
+    }
 }
