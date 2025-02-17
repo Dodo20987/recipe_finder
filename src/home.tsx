@@ -1,6 +1,5 @@
 import {Text, View, TextInput, Pressable,ScrollView} from 'react-native';
-import { useState, useEffect, useRef} from 'react';
-import Filter from './Filter';
+import { useState, useEffect, useRef, React} from 'react';
 import { getCategories, getData, getRandomRecipe, storeUserData, getUserData } from './fetch';
 import DisplaySearchResults from './DisplaySearchResults';
 import DisplayRandom from './DisplayRandom';
@@ -10,10 +9,10 @@ import * as SecureStore from "expo-secure-store";
 
 const Home: React.FC  = () => {
     const [displayCategory, setDisplayCategory] = useState<JSX.Element[]>([]);
-    const [categoryInfo, setCategoryInfo] = useState<any>();
+    const [categoryInfo, setCategoryInfo] = useState();
     const [category, setCategory] = useState<string>();
     const [recipeName, setRecipeName] = useState<string>("");
-    const [searchResults, setSearchResults] = useState<any[]>([]);
+    const [searchResults, setSearchResults] = useState([]);
     const [displayResults, setDisplayResults] = useState<MealItem[]>([]);
     const [userName, setUserName] = useState<string>("");
     const recipeRef = useRef(recipeName);
@@ -55,7 +54,7 @@ const Home: React.FC  = () => {
 
     useEffect(() => {
         const getToken = async () => {
-          let result = await SecureStore.getItemAsync("jwt");
+          const result = await SecureStore.getItemAsync("jwt");
           if(result) {
             // username is decoded.sub
             console.log("Your jwt token is: ", result);
@@ -63,7 +62,7 @@ const Home: React.FC  = () => {
             console.log("name: ", decoded.sub);
             const link = process.env.EXPO_PUBLIC_API_BASE + "/user?username=" + decoded.sub;
             storeUserData(link,decoded.sub,result);             
-            const userData = await getUserData();
+            //const userData = await getUserData();
             setUserName(decoded.sub);
           }
           else {

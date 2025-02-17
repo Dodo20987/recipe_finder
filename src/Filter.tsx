@@ -1,5 +1,5 @@
 import {Text, View, Modal, Alert, Pressable, TextInput, ScrollView} from 'react-native';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, React } from 'react';
 import { getCategories, getArea } from './fetch';
 interface FilterProps {
     filterVisible : boolean, 
@@ -12,15 +12,16 @@ const Filter: React.FC<FilterProps> = ({filterVisible, setFilterVisible}) => {
     }
     const [displayCategory, setDisplayCategory] = useState<JSX.Element[]>([]);
     const [displayArea, setDisplayArea] = useState<JSX.Element[]>([]);
-    const [categoryInfo, setCategoryInfo] = useState<any>();
+    const [categoryInfo, setCategoryInfo] = useState();
     const [category, setCategory] = useState<string>();
     const [area, setArea] = useState<string>("");
-    const [areaInfo, setAreaInfo] = useState<any>();
+    const [areaInfo, setAreaInfo] = useState();
     const [mainIngredient, setMainIngredient] = useState<string>("");
+
     const handleMainIngredient = (text : string) => {
         setMainIngredient(text);
-
     }
+
     const handleCategory = (text : string) =>{
         if(category === text)
             setCategory("");
