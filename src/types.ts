@@ -19,7 +19,7 @@ export interface loginRequest {
   name: string;
   password : string;
 }
-export interface Favourite {
+export interface Favourites {
   recipeID : number;
   userID : number;
   name? : string;
@@ -28,6 +28,11 @@ export interface Favourite {
   area : string;
   category : string;
 
+}
+
+export interface FavouriteRequest {
+  recipeID : number;
+  userID : number;
 }
 
 export type RootStackParamList = {

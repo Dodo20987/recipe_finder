@@ -137,17 +137,22 @@ export const registerAccount = async (link : string, userObj : User) => {
     }
 }
 
-export const saveToFavourites = async (link : string, favouriteObj : Favourite) => {
+export const saveToFavourites = async (link : string, favouriteObj : Favourite, token : string) => {
     try {
+        console.log("fav obj: ", favouriteObj);
+        console.log("link: ", link);
+        console.log("token: ", token)
         const response = await axios.post(link,{
-            "name" : favouriteObj.name,
+          "id" : {
             "userID" : favouriteObj.userID,
             "recipeID" : favouriteObj.recipeID 
+          } 
         }, {
             headers : {
+                "Authorization" : `Bearer ${token}`,
                 "Content-Type" : "application/json"
             }
-        })
+        });
 
         console.log("recipe sucessfully saved: ", response.data);
         return response.data;
@@ -285,13 +290,16 @@ export const deleteUser = async(link : string, token : string) => {
   }
 }
 
-export const getUserData = async () => {
+export const getUserData = async (setData : React.Dispatch<React.SetStateAction>) => {
   try {
+    console.log("getting user data");
     const userInfo = await AsyncStorage.getItem("user");
     
     console.log("userInfo: ", userInfo);
-    // returns a json obj with id, username, and password fields
-    return userInfo != null ? JSON.parse(userInfo) : null;
+    setData(userInfo);
+    // returns a obj with id, username, and password fields
+    //return userInfo != null ? JSON.parse(userInfo) : null;
+    //return userInfo;
   }
   catch(error) {
     console.error("There was an error with getting user data from AsyncStorage", error);

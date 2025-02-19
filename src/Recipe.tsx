@@ -1,9 +1,10 @@
 import {View, Text, ImageBackground, ActivityIndicator, ScrollView, Pressable} from "react-native";
-import { getMealByID,saveToFavourites  } from "./fetch";
+import { getMealByID,saveToFavourites, getUserData  } from "./fetch";
 import { useState, useEffect, React } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList, Favourite } from "./types";
+import { RootStackParamList, FavouriteRequest } from "./types";
 import { MaterialIcons} from "@expo/vector-icons";
+import * as SecureStore from "expo-secure-store";
 
 
 
@@ -13,41 +14,53 @@ const Recipe : React.FC<RecipeInputProps> = ({route}) => {
     const [recipeInfo, setRecipeInfo] = useState();
     const [displayInfo, setDisplayInfo] = useState();
     const [favoritePress, setFavoritePress] = useState(false);
+    const [userInfo, setUserInfo] = useState();
+    const [token, setToken] = useState("");
     const {ID} = route.params;
     const [userName, setUserName] = useState<string>("");
-    
+    //console.log("ID: ", ID);
     // TODO: need to fetch userID and username
     useEffect(() => {
         const getToken = async () => {
           const result = await SecureStore.getItemAsync("jwt");
+          setToken(result);
           if(result) {
-            // username is decoded.sub
-            console.log("Your jwt token is: ", result);
             const decoded = jwtDecode(result);
-            console.log("name: ", decoded.sub);
             const link = process.env.EXPO_PUBLIC_API_BASE + "/user?username=" + decoded.sub;
-            //const userData = await getUserData();
             setUserName(decoded.sub);
           }
           else {
             console.log("No values stored under the key 'jwt'");
           }
         }
+        getUserData(setUserInfo);
+        console.log("user info: ", userInfo);
         getToken();
         getMealByID(process.env.EXPO_PUBLIC_RECIPE_LOOKUP_LINK + "?i=" + ID || "", setRecipeInfo);
     },[])
-    
+
+    useEffect(() => {
+      if(token !== "") {
+        console.log("Updated userInfo: ", userInfo);
+        console.log("Updated token: ", token);
+      }
+    }, [userInfo, token]); 
+
     const handleFavoritePress = () => {
       console.log("Fav pressed");
-      const link = process.env.EXPO_PUBLIC_API_BASE + "/saveFavourite";
-      const favouriteObj : Favourite = {
-        recipe_id : ID,
-        userID :1,
-        name : userName
+      console.log("fav obj: ", favouriteObj);
+      console.log("token: ", token);
+
+      const link = process.env.EXPO_PUBLIC_API_BASE + "/favourite/save";
+      const favouriteObj : FavouriteRequest = {
+        recipeID : ID,
+        userID : userInfo.id
       };
-      saveToFavourites(link, favouriteObj);
+      // TODO: add a parameteter for a jwt token
+      saveToFavourites(link, favouriteObj, token);
       setFavoritePress(!favoritePress);
     }
+
     useEffect(() => {
         if(recipeInfo) {
             const ingredientsArr = [];
@@ -58,6 +71,7 @@ const Recipe : React.FC<RecipeInputProps> = ({route}) => {
                     ingredientsArr.push({ingredient : ingredient, measurement : measurement});
                 }
            }
+
             const newItem = {
                 name : recipeInfo["meals"][0]["strMeal"],
                 category : recipeInfo["meals"][0]["strCategory"],

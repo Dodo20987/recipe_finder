@@ -60,6 +60,7 @@ const Home: React.FC  = () => {
             console.log("Your jwt token is: ", result);
             const decoded = jwtDecode(result);
             console.log("name: ", decoded.sub);
+            console.log("obj: ", decoded);
             const link = process.env.EXPO_PUBLIC_API_BASE + "/user?username=" + decoded.sub;
             storeUserData(link,decoded.sub,result);             
             //const userData = await getUserData();

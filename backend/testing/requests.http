@@ -20,7 +20,7 @@ Authorization: Basic chicken:cat
 
 ### get all users
 GET  http://10.0.0.86:8080/users
-Authorization: Basic chicken:cat
+Authorization: Basic chicken:apple
 
 ### Inserting a user into the database
 POST http://10.0.0.86:8080/save
@@ -42,19 +42,24 @@ Content-Type: application/json
     "username" : "apples"
 }
 
-### getting the fav list for a user
+###localhose
 GET http://localhost:8080/favourites/1
 Authorization: Basic chicken:cat
 
+
+### getting the fav list for a user
+GET  http://10.0.0.86:8080/favourites/1
+Authorization: Basic chicken:apple
+
 ### saving a favourite recipe to to a user
-POST http://localhost:8080/favourite/save
-Authorization: Basic chicken:cat
+POST http://10.0.0.86:8080/favourite/save
+Authorization: Basic chicken:apple
 Content-Type: application/json
 
 {
     "id" : {
         "recipeID" : 122,
-        "userID" : 2
+        "userID" : 1
     }
 }
 
