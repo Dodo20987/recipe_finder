@@ -305,6 +305,23 @@ export const getUserData = async (setData : React.Dispatch<React.SetStateAction>
     console.error("There was an error with getting user data from AsyncStorage", error);
   }
 }
+export const getUserID = async (setData : React.Dispatch<React.SetStateAction>) => {
+  try {
+    console.log("getting user ID");
+    const userInfoString = await AsyncStorage.getItem("user");
+    const userInfo = JSON.parse(userInfoString);
+
+    console.log("userInfo: ", userInfo);
+    console.log("userInfo id: ", userInfo.id);
+    setData(userInfo.id);
+    // returns a obj with id, username, and password fields
+    //return userInfo != null ? JSON.parse(userInfo) : null;
+    //return userInfo;
+  }
+  catch(error) {
+    console.error("There was an error with getting user data from AsyncStorage", error);
+  }
+}
 
 export const logout = async () => {
   console.log("logging out");

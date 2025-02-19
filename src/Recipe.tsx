@@ -39,24 +39,13 @@ const Recipe : React.FC<RecipeInputProps> = ({route}) => {
         getMealByID(process.env.EXPO_PUBLIC_RECIPE_LOOKUP_LINK + "?i=" + ID || "", setRecipeInfo);
     },[])
 
-    useEffect(() => {
-      if(token !== "") {
-        console.log("Updated userInfo: ", userInfo);
-        console.log("Updated token: ", token);
-      }
-    }, [userInfo, token]); 
-
     const handleFavoritePress = () => {
-      console.log("Fav pressed");
-      console.log("fav obj: ", favouriteObj);
-      console.log("token: ", token);
-
       const link = process.env.EXPO_PUBLIC_API_BASE + "/favourite/save";
       const favouriteObj : FavouriteRequest = {
         recipeID : ID,
         userID : userInfo.id
       };
-      // TODO: add a parameteter for a jwt token
+
       saveToFavourites(link, favouriteObj, token);
       setFavoritePress(!favoritePress);
     }

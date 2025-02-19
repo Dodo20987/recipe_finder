@@ -10,6 +10,11 @@ export interface User {
   password : string;
   email?: string;
 }
+export interface userDetail {
+  username : string;
+  password : string;
+  id : number;
+}
 export interface UserUpdateRequest {
   username? : string;
   password? : string;

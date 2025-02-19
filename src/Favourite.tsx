@@ -1,8 +1,10 @@
 import {View, FlatList, Text, Pressable} from "react-native"
-import {getFavourites, removeFavourite} from "./fetch";
-import {Favourites} from "./types";
+import {getFavourites, removeFavourite, getUserID} from "./fetch";
+import {Favourites, userDetail} from "./types";
 import { useState, useEffect, React } from "react";
+import * as SecureStore from "expo-secure-store";
 
+/*
 const renderFavouriteList = (favouriteList) => {
   if (favouriteList.length === 0) {
     return null;
@@ -16,40 +18,48 @@ const renderFavouriteList = (favouriteList) => {
     )
   }
 }
+*/
 
 const Favourite = () => {
-  
   const [favouriteList, setFavouriteList] = useState<Favourites[]>([]);
   const [token, setToken] = useState<string>("");
   const [userID, setUserID] = useState<number>(0);
+
   useEffect(() => {
     const getToken = async () => {
       const result = await SecureStore.getItemAsync("jwt");
-      if(result) {
-        // username is decoded.sub
-        // structure of decoded is as follows:
-        // {sub : username }
-        console.log("Your jwt token is: ", result);
-        const decoded = jwtDecode(result);
-        console.log("info returned: ", decoded);
-        console.log("name: ", decoded.sub);
-
-        //const link = process.env.EXPO_PUBLIC_API_BASE + "/user?username=" + decoded.sub;
-        //const userData = await getUserData();
-        setToken(result);
-      }
-      else {
-        console.log("No values stored under the key 'jwt'");
-      }
+      setToken(result);
     }
+    getUserID(setUserID);
     getToken();
-    getFavouriteList(token);
   },[])
+
+  useEffect(() => {
+    if(token !== "" && userID !== 0 && userID !== undefined) {
+
+      /*
+      console.log("user info: ", userInfo);
+      console.log("user id: ", userInfo.id);
+      console.log("id : " ,userInfo["id"]);
+       */
+      console.log("userID: ", userID);
+      console.log("token: ", token);
+      getFavouriteList(token);
+    }
+  },[token, userID])
+
+  useEffect(() => {
+    if(favouriteList.length > 0) {
+      console.log("Favourite List: ", favouriteList);
+    }
+  },[favouriteList])
   
+  //TODO: get the favourite list and displat it onto the screen
   const getFavouriteList = (token : string) => {
-    // TODO: must append the userID to the link
-    const link = process.env.EXPO_PUBLIC_API_BASE + "/Favourite" + ``
-    getFavourites(link, token, setFavouriteList)
+    //console.log("userID: ", userInfo.id);
+    //console.log("token: ", token);
+    //const link = process.env.EXPO_PUBLIC_API_BASE + "/Favourite" + `${userID}`
+    //getFavourites(link, token, setFavouriteList)
   }
 
   /*const handleRemoveFavourite = (token : string) => {
